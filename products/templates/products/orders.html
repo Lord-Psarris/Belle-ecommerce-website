@@ -1,0 +1,55 @@
+{% extends 'main/base.html' %} 
+{% load static %} 
+
+{% block title %}ORDERS{% endblock %} 
+
+{% block content %}
+<!--Page Title-->
+<div class="page section-header text-center">
+    <div class="page-title">
+        <div class="wrapper"><h1 class="page-width">Your Orders</h1></div>
+      </div>
+</div>
+<!--End Page Title-->
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 main-col">
+                <div class="wishlist-table table-content table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="product-price text-center alt-font">Images</th>
+                                <th class="product-name alt-font">Product</th>
+                                <th class="product-price text-center alt-font">Unit Price</th>
+                                <th class="stock-status text-center alt-font">Order Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if order_items %}
+                            {% for item in order_items %}
+                            <tr>
+                                <td class="product-thumbnail text-center">
+                                    <a href="#"><img src="{% static '' %}media/{{ item.image }}" alt="" title="" /></a>
+                                </td>
+                                <td class="product-name"><h4 class="no-margin"><a href="{% url 'products:view_product_details' short_name=item.short_name %}">Minerva Dress black</a></h4></td>
+                                <td class="product-price text-center"><span class="amount">${{ item.price }}</span></td>
+                                <td class="stock text-center">
+                                    <span class="in-stock">{{ item.status }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="6">
+                                    <h3 class="text-center">You have no orders</h3>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+           </div>
+    </div>
+</div>
+{% endblock %}

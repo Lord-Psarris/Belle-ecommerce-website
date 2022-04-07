@@ -1,0 +1,394 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}PRODUCTS{% endblock %}
+
+{% block content %}
+
+<!--Collection Banner-->
+<div class="collection-header">
+    <div class="collection-hero">
+        <div class="collection-hero__image"><img class="blur-up lazyload"
+                                                 data-src="{% static 'images/cat-women2.jpg' %}"
+                                                 src="{% static 'images/cat-women2.jpg' %}" alt="Women"
+                                                 title="Women"/></div>
+        <div class="collection-hero__title-wrapper">
+            <h1 class="collection-hero__title page-width">Shop</h1>
+        </div>
+    </div>
+</div>
+<!--End Collection Banner-->
+
+<div class="container-fluid">
+    <div class="row">
+        <!--Sidebar-->
+        <div class="col-12 col-sm-12 col-md-3 col-lg-2 sidebar filterbar">
+            <div class="closeFilter d-block d-md-none d-lg-none"><i class="icon icon anm anm-times-l"></i></div>
+            <div class="sidebar_tags">
+                <!--Categories-->
+                <div class="sidebar_widget categories filter-widget">
+                    <div class="widget-title">
+                        <h2>Categories</h2>
+                    </div>
+                    <div class="widget-content">
+                        <ul class="sidebar_categories">
+                            <li class="level1"><a href="{% url 'products:all_products' %}?category=clothing"
+                                                  class="site-nav">Clothing</a>
+                            </li>
+                            <li class="level1"><a href="{% url 'products:all_products' %}?category=jewellery"
+                                                  class="site-nav">Jewellery</a>
+                            </li>
+                            <li class="lvl-1"><a href="{% url 'products:all_products' %}?category=shoes"
+                                                 class="site-nav">Shoes</a></li>
+                            <li class="lvl-1"><a href="{% url 'products:all_products' %}?category=accessories"
+                                                 class="site-nav">Accessories</a></li>
+                            <li class="lvl-1"><a href="{% url 'products:collections' %}"
+                                                 class="site-nav">Collections</a></li>
+                            <li class="lvl-1"><a href="{% url 'products:all_products' %}?on-sale=True"
+                                                 class="site-nav">Sale</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--Categories-->
+                <!--Price Filter-->
+                <div class="sidebar_widget filterBox filter-widget">
+                    <div class="widget-title">
+                        <h2>Price</h2>
+                    </div>
+                    <form action="" method="get" class="price-filter">
+
+                        {% if request.GET.category %}
+                        <input type="text" name="category" value="{{request.GET.category}}" hidden>
+                        {% endif %}
+                        {% if request.GET.sort %}
+                        <input type="text" name="sort" value="{{request.GET.sort}}" hidden>
+                        {% endif %}
+                        <div id="slider-range"
+                             class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
+                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
+                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="no-margin"><input id="priceAmount" name="price" type="text"></p>
+                            </div>
+                            <div class="col-6 text-right margin-25px-top">
+                                <button class="btn btn-secondary btn--small">filter</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!--End Price Filter-->
+                <!--Size Swatches-->
+                <div class="sidebar_widget filterBox filter-widget size-swacthes">
+                    <div class="widget-title">
+                        <h2>Size</h2>
+                    </div>
+                    <div class="filter-color swacth-list">
+                        <ul>
+                            <li><span class="swacth-btn checked">X</span></li>
+                            <li><span class="swacth-btn">XL</span></li>
+                            <li><span class="swacth-btn">XLL</span></li>
+                            <li><span class="swacth-btn">M</span></li>
+                            <li><span class="swacth-btn">L</span></li>
+                            <li><span class="swacth-btn">S</span></li>
+                            <li><span class="swacth-btn">XXXL</span></li>
+                            <li><span class="swacth-btn">XXL</span></li>
+                            <li><span class="swacth-btn">XS</span></span></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--End Size Swatches-->
+                <!--Color Swatches-->
+                <div class="sidebar_widget filterBox filter-widget">
+                    <div class="widget-title">
+                        <h2>Color</h2>
+                    </div>
+                    <div class="filter-color swacth-list clearfix">
+                        <span id="*" class="swacth-btn checked"></span>
+                        <span id="black" class="swacth-btn black"></span>
+                        <span id="white" class="swacth-btn white"></span>
+                        <span id="red" class="swacth-btn red"></span>
+                        <span id="blue" class="swacth-btn blue"></span>
+                        <span id="pink" class="swacth-btn pink"></span>
+                        <span id="gray" class="swacth-btn gray"></span>
+                        <span id="green" class="swacth-btn green"></span>
+                        <span id="orange" class="swacth-btn orange"></span>
+                        <span id="yellow" class="swacth-btn yellow"></span>
+                        <span id="blueviolet" class="swacth-btn blueviolet"></span>
+                        <span id="brown" class="swacth-btn brown"></span>
+                        <span id="darkGoldenRod" class="swacth-btn darkGoldenRod"></span>
+                        <span id="darkGreen" class="swacth-btn darkGreen"></span>
+                        <span id="darkRed" class="swacth-btn darkRed"></span>
+                        <span id="dimGrey" class="swacth-btn dimGrey"></span>
+                        <span id="khaki" class="swacth-btn khaki"></span>
+                    </div>
+                </div>
+                <!--End Color Swatches-->
+                <!--Popular Products-->
+                <div class="sidebar_widget">
+                    <div class="widget-title">
+                        <h2>Popular Products</h2>
+                    </div>
+                    <div class="widget-content">
+                        <div class="list list-sidebar-products">
+                            <div class="grid">
+                                {% for product in popular_products %}
+                                <div class="grid__item">
+                                    <div class="mini-list-item">
+                                        <div class="mini-view_image">
+                                            <a class="grid-view-item__link"
+                                               href="{% url 'products:view_product_details' short_name=product.short_name %}">
+                                                <img class="grid-view-item__image"
+                                                     src="{% static '' %}media/{{ product.image1 }}"
+                                                     alt="product image"/>
+                                            </a>
+                                        </div>
+                                        <div class="details">
+                                            <a class="grid-view-item__title"
+                                               href="{% url 'products:view_product_details' short_name=product.short_name %}">
+                                                {{ product.name }}
+                                            </a>
+                                            <div class="grid-view-item__meta"><span class="product-price__price"><span
+                                                    class="money">${{ product.price }}</span></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End Popular Products-->
+                <!--Banner-->
+                <!-- <div class="sidebar_widget static-banner">
+                    <img src="{% static 'images/side-banner-2.jpg' %}" alt="" />
+                </div> -->
+                <!--Banner-->
+                <!--Information-->
+                <div class="sidebar_widget">
+                    <div class="widget-title">
+                        <h2>Information</h2>
+                    </div>
+                    <div class="widget-content">
+                        <p>Use this text to share information about your brand with your customers.
+                            Describe a product, share announcements, or welcome customers to your store.
+                        </p>
+                    </div>
+                </div>
+                <!--end Information-->
+            </div>
+        </div>
+        <!--End Sidebar-->
+        <!--Main Content-->
+        <div class="col-12 col-sm-12 col-md-9 col-lg-10 main-col">
+            <div class="productList">
+                <!--Toolbar-->
+                <button type="button" class="btn btn-filter d-block d-md-none d-lg-none"> Product
+                    Filters
+                </button>
+                <div class="toolbar">
+                    <div class="filters-toolbar-wrapper">
+                        <div class="row">
+                            <div
+                                    class="col-4 col-md-4 col-lg-4 filters-toolbar__item collection-view-as d-flex justify-content-start align-items-center">
+                            </div>
+                            <div
+                                    class="col-4 col-md-4 col-lg-4 text-center filters-toolbar__item filters-toolbar__item--count d-flex justify-content-center align-items-center">
+                                <span class="filters-toolbar__product-count">Showing: {{ products_length }}</span>
+                            </div>
+                            <div class="col-4 col-md-4 col-lg-4 text-right">
+                                <form action="" method="get" id="sortForm" class="filters-toolbar__item">
+                                    {% if request.GET.category %}
+                                    <input type="text" name="category" value="{{request.GET.category}}" hidden>
+                                    {% endif %}
+                                    {% if request.GET.price %}
+                                    <input type="text" name="price" value="{{request.GET.price}}" hidden>
+                                    {% endif %}
+                                    <label for="SortBy" class="hidden">Sort</label>
+                                    <select name="sort" id="SortBy"
+                                            class="filters-toolbar__input filters-toolbar__input--sort">
+                                        <option value="title-ascending" selected="selected">Sort
+                                        </option>
+                                        <option value="best-selling">Best Selling</option>
+                                        <option value="a-z">Alphabetically, A-Z</option>
+                                        <option value="z-a">Alphabetically, Z-A</option>
+                                        <option value="price-low-price-high">Price, low to high</option>
+                                        <option value="price-high-price-low">Price, high to low</option>
+                                    </select>
+                                    <input class="collection-header__default-sort" type="hidden" value="manual">
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!--End Toolbar-->
+
+                <div class="grid-products grid--view-items">
+                    <div class="row">
+                        {% if products %}
+                        {% for product in products %}
+
+                        {% if product.out_of_stock %}
+                        <div data-sizes="{{ product.sizes_available }}" data-colors="{{ product.colors_available }}"
+                             class="col-6 col-sm-6 col-md-4 col-lg-3 grid-view-item style2 item grid-view-item--sold-out">
+                            {% else %}
+                            <div data-sizes="{{ product.sizes_available }}" data-colors="{{ product.colors_available }}"
+                                 class="col-6 col-sm-6 col-md-4 col-lg-3 grid-view-item style2 item">
+                                {% endif %}
+                                <div class="grid-view_image">
+                                    <!-- start product image -->
+                                    {% if product.out_of_stock %}
+                                    <a href="#"
+                                       class="grid-view-item__link">
+                                       {% else %}
+                                       <a href="{% url 'products:view_product_details' short_name=product.short_name %}"
+                                          class="grid-view-item__link">
+                                       {% endif %}
+                                        <!-- image -->
+                                        <img class="grid-view-item__image primary blur-up lazyload"
+                                             data-src="{% static '' %}media/{{ product.image1 }}"
+                                             src="{% static '' %}media/{{ product.image1 }}" alt="image"
+                                             title="product">
+                                        <!-- End image -->
+                                        <!-- Hover image -->
+                                        <img class="grid-view-item__image hover blur-up lazyload"
+                                             data-src="{% static '' %}media/{{ product.image2 }}"
+                                             src="{% static '' %}media/{{ product.image2 }}" alt="image"
+                                             title="product">
+                                        {% if product.out_of_stock %}
+                                        <span class="sold-out"><span>Sold out</span></span>
+                                        {% endif %}
+                                        <!-- End hover image -->
+                                        <!-- product label -->
+                                        <div class="product-labels rectangular">
+                                            {% if product.has_discount %}
+                                            <span class="lbl on-sale">-{{ product.discounted_percent }}%</span>
+
+                                            {% endif %}
+                                            {% if product.is_new %}
+                                            <span class="lbl pr-label1">new</span>
+                                            {% endif %}
+                                        </div>
+                                        <!-- End product label -->
+                                    </a>
+                                    <!-- end product image -->
+
+                                    <!--start product details -->
+                                    <div class="product-details hoverDetails text-center mobile">
+                                        <!-- product name -->
+                                        <div class="product-name">
+                                            <a href="#">{{ product.name }}</a>
+                                        </div>
+                                        <!-- End product name -->
+                                        <!-- product price -->
+                                        <div class="product-price">
+                                            {% if product.has_discount %}
+
+                                            <span class="old-price">${{ product.price }}</span>
+                                            <span class="price">${{ product.slashed_price }}</span>
+                                            {% else %}
+                                            <span class="price">${{ product.price }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <!-- End product price -->
+                                        <div class="product-review">
+                                            <i class="font-13 fa fa-star"></i>
+                                            <i class="font-13 fa fa-star"></i>
+                                            <i class="font-13 fa fa-star"></i>
+                                            <i class="font-13 fa fa-star-o"></i>
+                                            <i class="font-13 fa fa-star-o"></i>
+                                        </div>
+                                        <!-- product button -->
+                                        {% if not product.out_of_stock %}
+                                        <div class="button-set">
+                                            <!-- Start product button -->
+                                            <form action="{% url 'products:add_to_cart' %}?return_url={{ request.path }}" method="post">
+                                                {% csrf_token %}
+                                                <input type="text" name="pk" value="{{ product.pk }}" hidden>
+                                                <button class="btn btn--secondary cartIcon btn-addto-cart"
+                                                        type="submit">
+                                                    <i class="icon anm anm-bag-l"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{% url 'products:add_to_wishlist' %}?return_url={{ request.path }}" method="post" class="wishlist-btn">
+                                                {% csrf_token %}
+                                                <input type="text" name="pk" value="{{ product.pk }}" hidden>
+                                                <button class="btn btn--secondary cartIcon btn-addto-cart"
+                                                        type="submit">
+                                                    <i class="icon anm anm-heart-l"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        {% endif %}
+                                        <!-- end product button -->
+                                    </div>
+                                    <!-- End product details -->
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {% else %}
+                        <h1 class="w-100 text-center">No Products</h1>
+                        {% endif %}
+                    </div>
+                </div>
+                <!--End Main Content-->
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
+
+    {% block script %}
+    <script>
+        var acceptedSizes = []
+
+        $('.swacth-list.clearfix .swacth-btn').on('click', function () {
+            var color = $(this).attr('id')
+            $('.grid-view-item').each(function (i, obj) {
+                if (color == '*') {
+                    $(this).removeClass('d-none')
+                    return
+                }
+                var dataSet = $(this).data('colors')
+                if (dataSet.includes(color)) {
+                    $(this).removeClass('d-none')
+                } else {
+                    $(this).addClass('d-none')
+                }
+            });
+        })
+
+        $('.swacth-list .swacth-btn').on('click', function () {
+            var size = $(this).html()
+            $('.grid-view-item').each(function (i, obj) {
+                var dataSet = $(this).data('sizes')
+                if (dataSet.includes(size)) {
+                    if (!acceptedSizes.includes(size)) {
+                        acceptedSizes.push(size)
+                        $(this).removeClass('d-none')
+                    }
+                } else {
+                    for (acceptedSize of acceptedSizes) {
+                        if (dataSet.includes(acceptedSize)) {
+                            return
+                        }
+                    }
+                    $(this).addClass('d-none')
+                    // var index = acceptedSizes.indexOf(size)
+                    // acceptedSizes.splice(index, 1)
+                }
+            });
+        })
+
+        $('#SortBy').on('change', function () {
+            $('#sortForm').submit()
+        })
+
+
+    </script>
+    {% endblock %}

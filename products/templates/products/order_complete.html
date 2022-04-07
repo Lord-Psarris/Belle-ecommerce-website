@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}THANK YOU{% endblock %}
+
+{% block content %}
+<!-- Lookbook Start -->
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12">	
+            <div class="empty-page-content text-center">
+                <h1>Order Received</h1>
+                <p>Thank you for shopping with us. You probably will never recieve the products since this is a template site</p>
+                <p><a href="{% url 'products:orders' %}" class="btn btn--has-icon-after">View Order &nbsp;<i class="fa fa-caret-right" aria-hidden="true"></i></a></p>
+              </div>
+        </div>
+    </div>
+</div>
+<!-- Lookbook Start -->
+{% endblock %}
