@@ -1,8 +1,75 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}SEARCH - {% endblock %}
+{% block title %}SEARCH - {{ search }}{% endblock %}
 
 {% block content %}
-search
+<!--Collection Banner-->
+<div class="collection-header">
+    <div class="collection-hero">
+        <div class="collection-hero__image"><img data-src="{% static 'images/cat-women3.jpg' %}" src="{% static 'images/cat-women3.jpg' %}" alt="Women" title="Women" /></div>
+        <div class="collection-hero__title-wrapper"><h1 class="collection-hero__title page-width">You searched for {{ search }}</h1></div>
+    </div>
+</div>
+<!--End Collection Banner-->
+
+<div class="container">
+    <div class="row">
+        <!--Main Content-->
+        <div class="col-12 col-sm-12 col-md-9 col-lg-9 main-col mx-auto">
+            <div class="productList">
+                <div class="list-view-items grid--view-items">
+
+                    {% for result in results %}
+                    <!--ListView Item-->
+                    <div class="list-product list-view-item">
+                        <div class="list-view-item__image-column">
+                            <div class="list-view-item__image-wrapper">
+                                <!-- Image -->
+                                <a href="{% url 'products:view_product_details' short_name=result.short_name %}">
+                                    <img class="list-view-item__image blur-up lazyload" data-src="{% static '' %}media/{{ result.image1 }}" src="{% static '' %}media/{{ result.image1 }}" alt="image" title="product"></a>
+                                <!-- End Image -->
+                            </div>
+                        </div>
+                        <div class="list-view-item__title-column">
+                            <div class="h4 grid-view-item__title"><a href="{% url 'products:view_product_details' short_name=result.short_name %}">{{ result.name }}</a></div>
+                            <!-- Product Review -->
+                            <p class="product-review"><i class="font-13 fa fa-star"></i><i class="font-13 fa fa-star"></i><i class="font-13 fa fa-star"></i><i class="font-13 fa fa-star-o"></i><i class="font-13 fa fa-star-o"></i></p>
+                            <!-- End Product Review -->
+                            <!-- Sort Description -->
+                            <p>{{ result.description }}</p>
+                            <!-- End Sort Description -->
+                            <!-- Price -->
+                            <p class="product-price grid-view-item__meta">
+                                {% if result.has_discount %}
+                                <span class="old-price">${{ result.slashed_price }}</span>
+                                <span class="product-price__price product-price__sale"><span class="money">${{ result.price }}</span></span>
+                                {% else %}
+                                <span class="product-price__price product-price__sale"><span class="money">${{ result.price }}</span></span>
+                                {% endif %}
+                            </p>
+                            <!-- End Price -->
+                            <form class="variants" action="{% url 'products:add_to_cart' %}?return_url={{ request.path }}" method="post">
+                                {% csrf_token %}
+                                <input type="text" name="pk" value="{{ result.pk }}" hidden>
+                                <button class="btn btn--small" type="submit"
+                                        tabindex="0">Add to cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <!--End ListView Item-->
+                    {% endfor %}
+                    
+                </div>
+            </div>
+            <div class="infinitpaginOuter">
+                <div class="infinitpagin">	
+                    <a href="#" class="btn loadMore">Load More</a>
+                </div>
+            </div>
+        </div>
+        <!--End Main Content-->
+    </div>
+</div>
 {% endblock %}
