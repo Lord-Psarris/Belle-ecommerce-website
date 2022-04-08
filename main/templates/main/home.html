@@ -438,4 +438,97 @@
     </div>
 </div>
 <!--End Store Information-->
+
+                <!--Featured Product-->
+                <div class="product-rows section">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="section-header text-center">
+                                    <h2 class="h2">Featured Products</h2>
+                                    <p>Our suggested products based on sales</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-products">
+                            <div class="row">
+                                {% for item in suggested_products %}
+                                <div class="col-6 col-sm-6 col-md-4 col-lg-4 item grid-view-item style2">
+                                    <div class="grid-view_image">
+                                        <!-- start product image -->
+                                        <a href="{% url 'products:view_product_details' short_name=item.short_name %}" class="grid-view-item__link">
+                                            <!-- image -->
+                                            <img class="grid-view-item__image primary blur-up lazyload"
+                                                data-src="{% static '' %}media/{{ item.image1 }}"
+                                                src="{% static '' %}media/{{ item.image1 }}" alt="image"
+                                                title="product">
+                                            <!-- End image -->
+                                            <!-- Hover image -->
+                                            <img class="grid-view-item__image hover blur-up lazyload"
+                                                data-src="{% static '' %}media/{{ item.image2 }}"
+                                                src="{% static '' %}media/{{ item.image2 }}" alt="image"
+                                                title="product">
+                                            <!-- End hover image -->
+                                            <!-- product label -->
+                                            <div class="product-labels rectangular">
+                                                {% if item.has_discount %}
+                                                <span class="lbl on-sale">-{{ item.discounted_percent }}%</span>
+                                                {% endif %}
+                                                {% if item.is_new %}
+                                                <span class="lbl pr-label1">new</span>
+                                                {% endif %}
+                                            </div>
+                                            <!-- End product label -->
+                                        </a>
+                                        <!-- end product image -->
+                                        <!--start product details -->
+                                        <div class="product-details hoverDetails text-center mobile">
+                                            <!-- product name -->
+                                            <div class="product-name">
+                                                <a href="{% url 'products:view_product_details' short_name=item.short_name %}">{{ item.name }}</a>
+                                            </div>
+                                            <!-- End product name -->
+                                            
+                                            <!-- product price -->
+                                            <div class="product-price">
+                                                {% if item.has_discount %}
+                                                <span class="old-price">${{ item.price }}</span>
+                                                <span class="price">${{ item.slashed_price }}</span>
+                                                {% else %}
+                                                <span class="price">${{ item.price }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <!-- End product price -->
+
+                                            <!-- Start product button -->
+                                            <div class="button-set">
+                                                <form action="{% url 'products:add_to_cart' %}?return_url={{ request.path }}" method="post">
+                                                    {% csrf_token %}
+                                                    <input type="text" name="pk" value="{{ item.pk }}" hidden>
+                                                    <button class="btn btn--secondary cartIcon btn-addto-cart"
+                                                            type="submit">
+                                                        <i class="icon anm anm-bag-l"></i>
+                                                    </button>
+                                                </form>
+                                                <form action="{% url 'products:add_to_wishlist' %}?return_url={{ request.path }}" method="post" class="wishlist-btn">
+                                                    {% csrf_token %}
+                                                    <input type="text" name="pk" value="{{ item.pk }}" hidden>
+                                                    <button class="btn btn--secondary cartIcon btn-addto-cart"
+                                                            type="submit">
+                                                        <i class="icon anm anm-heart-l"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <!-- end product button -->
+                                        </div>
+                                        <!-- End product details -->
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End Featured Product-->
 {% endblock %}

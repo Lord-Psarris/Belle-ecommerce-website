@@ -75,3 +75,8 @@ class OrderItems(models.Model):
     def __str__(self):
         return f'{self.order.user.email}: Order-{self.order.id}'
 
+
+class RecentlyViewedProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    session_key = models.CharField(max_length=255, default='')
+

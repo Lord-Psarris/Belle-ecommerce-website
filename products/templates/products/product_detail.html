@@ -561,49 +561,58 @@
             <!--Related Product Slider-->
             <div class="related-product grid-products">
                 <header class="section-header">
-                    <h2 class="section-header__title text-center h2"><span>Related Products</span></h2>
+                    <h2 class="section-header__title text-center h2"><span>Suggested Products</span></h2>
                 </header>
                 <div class="productPageSlider">
 
+                    {% for item in suggested_products %}
                     <div class="col-12 item">
                         <!-- start product image -->
                         <div class="product-image">
                             <!-- start product image -->
-                            <a href="#">
+                            <a href="{% url 'products:view_product_details' short_name=item.short_name %}">
                                 <!-- image -->
                                 <img class="primary blur-up lazyload"
-                                     data-src="assets/images/product-images/product-image1.jpg"
-                                     src="assets/images/product-images/product-image1.jpg" alt="image"
+                                     data-src="{% static '' %}media/{{ item.image1 }}"
+                                     src="{% static '' %}media/{{ item.image1 }}" alt="image"
                                      title="product">
                                 <!-- End image -->
                                 <!-- Hover image -->
                                 <img class="hover blur-up lazyload"
-                                     data-src="assets/images/product-images/product-image1-1.jpg"
-                                     src="assets/images/product-images/product-image1-1.jpg" alt="image"
+                                     data-src="{% static '' %}media/{{ item.image2 }}"
+                                     src="{% static '' %}media/{{ item.image2 }}" alt="image"
                                      title="product">
                                 <!-- End hover image -->
                                 <!-- product label -->
-                                <div class="product-labels rectangular"><span class="lbl on-sale">-16%</span>
-                                    <span class="lbl pr-label1">new</span></div>
+                                <div class="product-labels rectangular">
+                                    {% if item.has_discount %}
+                                    <span class="lbl on-sale">-{{ item.discounted_percent }}%</span>
+                                    {% endif %}
+                                    {% if item.is_new %}
+                                    <span class="lbl pr-label1">new</span>
+                                    {% endif %}
+                                </div>
                                 <!-- End product label -->
                             </a>
                             <!-- end product image -->
 
                             <!-- Start product button -->
-                            <form class="variants add" action="#" onclick="window.location.href='cart.html'"
-                                  method="post">
-                                <button class="btn btn-addto-cart" type="button" tabindex="0">Select Options
+                            <form class="variants add" action="{% url 'products:add_to_cart' %}?return_url={{ request.path }}" method="post">
+                                {% csrf_token %}
+                                <input type="text" name="pk" value="{{ item.pk }}" hidden>
+                                <button class="btn btn-addto-cart" type="submit"
+                                        tabindex="0">Add to cart
                                 </button>
                             </form>
                             <div class="button-set">
-                                <a href="#" title="Quick View" class="quick-view" tabindex="0">
-                                    <i class="icon anm anm-search-plus-r"></i>
-                                </a>
-                                <div class="wishlist-btn">
-                                    <a class="wishlist add-to-wishlist" href="wishlist.html">
+                                <form action="{% url 'products:add_to_wishlist' %}?return_url={{ request.path }}" method="post" class="wishlist-btn">
+                                    {% csrf_token %}
+                                    <input type="text" name="pk" value="{{ item.pk }}" hidden>
+                                    <button class="btn btn--secondary cartIcon btn-addto-cart"
+                                            type="submit">
                                         <i class="icon anm anm-heart-l"></i>
-                                    </a>
-                                </div>
+                                    </button>
+                                </form>
                             </div>
                             <!-- end product button -->
                         </div>
@@ -612,13 +621,17 @@
                         <div class="product-details text-center">
                             <!-- product name -->
                             <div class="product-name">
-                                <a href="#">Edna Dress</a>
+                                <a href="{% url 'products:view_product_details' short_name=item.short_name %}">{{ item.name }}</a>
                             </div>
                             <!-- End product name -->
                             <!-- product price -->
                             <div class="product-price">
-                                <span class="old-price">$500.00</span>
-                                <span class="price">$600.00</span>
+                                {% if item.has_discount %}
+                                <span class="old-price">${{ item.price }}</span>
+                                <span class="price">${{ item.slashed_price }}</span>
+                                {% else %}
+                                <span class="price">${{ item.price }}</span>
+                                {% endif %}
                             </div>
                             <!-- End product price -->
 
@@ -629,26 +642,10 @@
                                 <i class="font-13 fa fa-star-o"></i>
                                 <i class="font-13 fa fa-star-o"></i>
                             </div>
-                            <!-- Variant -->
-                            <ul class="swatches">
-                                <li class="swatch medium rounded"><img
-                                        src="assets/images/product-images/variant1.jpg" alt="image"/></li>
-                                <li class="swatch medium rounded"><img
-                                        src="assets/images/product-images/variant2.jpg" alt="image"/></li>
-                                <li class="swatch medium rounded"><img
-                                        src="assets/images/product-images/variant3.jpg" alt="image"/></li>
-                                <li class="swatch medium rounded"><img
-                                        src="assets/images/product-images/variant4.jpg" alt="image"/></li>
-                                <li class="swatch medium rounded"><img
-                                        src="assets/images/product-images/variant5.jpg" alt="image"/></li>
-                                <li class="swatch medium rounded"><img
-                                        src="assets/images/product-images/variant6.jpg" alt="image"/></li>
-                            </ul>
-                            <!-- End Variant -->
                         </div>
                         <!-- End product details -->
                     </div>
-
+                    {% endfor %}
                 </div>
             </div>
             <!--End Related Product Slider-->
@@ -656,33 +653,60 @@
             <!--Recently Product Slider-->
             <div class="related-product grid-products">
                 <header class="section-header">
-                    <h2 class="section-header__title text-center h2"><span>Recently Viewed Product</span></h2>
+                    <h2 class="section-header__title text-center h2"><span>Recently Viewed Products</span></h2>
                 </header>
                 <div class="productPageSlider">
-
+                
+                    {% for item in recently_viewed_items %}
                     <div class="col-12 item">
                         <!-- start product image -->
                         <div class="product-image">
                             <!-- start product image -->
-                            <a href="#">
+                            <a href="{% url 'products:view_product_details' short_name=item.short_name %}">
                                 <!-- image -->
                                 <img class="primary blur-up lazyload"
-                                     data-src="assets/images/product-images/product-image6.jpg"
-                                     src="assets/images/product-images/product-image6.jpg" alt="image"
+                                     data-src="{% static '' %}media/{{ item.first_image }}"
+                                     src="{% static '' %}media/{{ item.first_image }}" alt="image"
                                      title="product">
                                 <!-- End image -->
                                 <!-- Hover image -->
                                 <img class="hover blur-up lazyload"
-                                     data-src="assets/images/product-images/product-image6-1.jpg"
-                                     src="assets/images/product-images/product-image6-1.jpg" alt="image"
+                                     data-src="{% static '' %}media/{{ item.second_image }}"
+                                     src="{% static '' %}media/{{ item.second_image }}" alt="image"
                                      title="product">
                                 <!-- End hover image -->
                                 <!-- product label -->
-                                <div class="product-labels rectangular"><span class="lbl on-sale">-16%</span>
-                                    <span class="lbl pr-label1">new</span></div>
+                                <div class="product-labels rectangular">
+                                {% if item.has_discount %}
+                                <span class="lbl on-sale">-{{ item.discounted_percent }}%</span>
+                                {% endif %}
+                                {% if item.is_new %}
+                                <span class="lbl pr-label1">new</span>
+                                {% endif %}
+                                </div>
                                 <!-- End product label -->
                             </a>
                             <!-- end product image -->
+
+                            <!-- Start product button -->
+                            <form class="variants add" action="{% url 'products:add_to_cart' %}?return_url={{ request.path }}" method="post">
+                                {% csrf_token %}
+                                <input type="text" name="pk" value="{{ item.pk }}" hidden>
+                                <button class="btn btn-addto-cart" type="submit"
+                                        tabindex="0">Add to cart
+                                </button>
+                            </form>
+                            <div class="button-set">
+                                <form action="{% url 'products:add_to_wishlist' %}?return_url={{ request.path }}" method="post" class="wishlist-btn">
+                                    {% csrf_token %}
+                                    <input type="text" name="pk" value="{{ item.pk }}" hidden>
+                                    <button class="btn btn--secondary cartIcon btn-addto-cart"
+                                            type="submit">
+                                        <i class="icon anm anm-heart-l"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <!-- end product button -->
                         </div>
                         <!-- end product image -->
 
@@ -690,13 +714,13 @@
                         <div class="product-details text-center">
                             <!-- product name -->
                             <div class="product-name">
-                                <a href="#">Zipper Jacket</a>
+                                <a href="{% url 'products:view_product_details' short_name=item.short_name %}">{{ item.name }}</a>
                             </div>
                             <!-- End product name -->
                         </div>
                         <!-- End product details -->
                     </div>
-                    
+                    {% endfor %}
                 </div>
             </div>
             <!--End Recently Product Slider-->

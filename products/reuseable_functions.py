@@ -1,4 +1,5 @@
 import json
+import random
 
 from .models import Product, Cart
 
@@ -201,6 +202,19 @@ def get_all_cart_items(user):
             "quantity": item.quantity,
         }
         returned_list.append(item_data)
+
+    return returned_list
+
+
+def get_suggested_products(session_key):
+    random.seed(session_key)
+    returned_list = []
+
+    products = get_all_products(include_out_of_stock=False)
+    for i in range(12):
+        random_product = random.choice(products)
+        if random_product not in returned_list:
+            returned_list.append(random_product)
 
     return returned_list
 

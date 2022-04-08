@@ -7,18 +7,20 @@ from django.shortcuts import render
 from main.models import NewsletterSubscriber
 from products.models import Product
 from products.reuseable_functions import get_on_sale_products, get_best_selling_products, get_newly_arrived_products, \
-    get_products_based_on_category
+    get_products_based_on_category, get_suggested_products
 
 
 def home(request):
     best_selling_products = get_best_selling_products()[:10]
     on_sale_products = get_on_sale_products()[:10]
     new_arriving_products = get_newly_arrived_products()[:10]
+    suggested_products = get_suggested_products(request.session.session_key)
 
     data = {
         'best_selling_products': best_selling_products,
         'on_sale_products': on_sale_products,
         'new_arriving_products': new_arriving_products,
+        'suggested_products': suggested_products,
         'home': True
     }
 
@@ -62,7 +64,7 @@ def search(request):
     return render(request, 'main/search.html', {'search': search_query, 'results': results})
 
 
-def subscibe_to_newsletter(request):
+def subscribe_to_newsletter(request):
     email = request.POST.get('email')
     return_url = request.GET.get('return_url')
 

@@ -200,7 +200,7 @@
                                         <div class="section-header text-center">
                                             <label class="h2"><span>sign up for </span>newsletter</label>
                                         </div>
-                                        <form action="{% url 'main:subscibe_to_newsletter' %}?return_url={{ request.path }}" method="post">
+                                        <form action="{% url 'main:subscribe_to_newsletter' %}?return_url={{ request.path }}" method="post">
                                             {% csrf_token %}
                                             <div class="input-group">
                                                 <input type="email" class="input-group__field newsletter__input"

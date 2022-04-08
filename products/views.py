@@ -7,16 +7,16 @@ from .models import *
 
 # Create your views here.
 from .reuseable_functions import get_all_products, get_on_sale_products, get_best_selling_products, \
-    get_products_based_on_category, get_all_cart_items
+    get_products_based_on_category, get_all_cart_items, get_suggested_products
 
 
 def all_products(request):
     products = []
     all_shop_products = get_all_products(include_out_of_stock=True)
+    popular_products = get_best_selling_products(include_out_of_stock=False, order='descending')[:4]
+
     if request.GET.get('on-sale'):
         all_shop_products = get_on_sale_products(include_out_of_stock=True)
-
-    popular_products = get_best_selling_products(include_out_of_stock=False, order='descending')[:4]
 
     if request.GET.get('sort'):
         sort = request.GET.get('sort')
@@ -60,6 +60,8 @@ def collection_view(request, collection):
 
 def view_product_details(request, short_name):
     products = Product.objects.all()
+    suggested_products = get_suggested_products(request.session.session_key)
+
     for product in products:
         if product.get_short_name() == short_name:
             slashed_price = product.price - round(product.price * (product.discounted_percent / 100))
@@ -86,7 +88,32 @@ def view_product_details(request, short_name):
                 'slashed_price': round(slashed_price, 2),
                 'saved_amount': round(product.price - slashed_price, 2),
             }
-            return render(request, 'products/product_detail.html', {'product_data': product_data})
+
+            already_viewed_count = RecentlyViewedProduct.objects.filter(product=product, session_key=request.session.session_key).count()
+            if already_viewed_count == 0:
+                new_recently_viewed_product = RecentlyViewedProduct(session_key=request.session.session_key, product=product)
+                new_recently_viewed_product.save()
+
+            recently_viewed_items = []
+
+            for viewed_product in RecentlyViewedProduct.objects.filter(session_key=request.session.session_key).all():
+                item = {
+                    'name': viewed_product.product.name,
+                    'short_name': viewed_product.product.get_short_name(),
+                    'first_image': viewed_product.product.productimage_set.all()[0].file,
+                    'second_image': viewed_product.product.productimage_set.all()[1].file,
+                    'has_discount': viewed_product.product.has_discount,
+                    'is_new': viewed_product.product.is_new,
+                    'discounted_percent': viewed_product.product.discounted_percent,
+                }
+
+                recently_viewed_items.append(item)
+            data = {
+                'product_data': product_data,
+                'recently_viewed_items': recently_viewed_items,
+                'suggested_products': suggested_products,
+            }
+            return render(request, 'products/product_detail.html', data)
     raise Http404
 
 
