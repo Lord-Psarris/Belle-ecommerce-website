@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+
 from accounts.models import Users
 
 
@@ -79,4 +81,17 @@ class OrderItems(models.Model):
 class RecentlyViewedProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     session_key = models.CharField(max_length=255, default='')
+
+
+class ProductReview(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, default='')
+    email = models.EmailField(max_length=255, default='')
+    title = models.CharField(max_length=255, default='')
+    body = models.TextField(default='')
+    rating = models.PositiveIntegerField(default=0)
+    review_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title
 

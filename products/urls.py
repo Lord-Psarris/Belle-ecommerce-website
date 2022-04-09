@@ -16,6 +16,7 @@ urlpatterns = [
 
     path('use-coupon/', forms.use_coupon, name='use_coupon'),
     path('process-checkout/', forms.process_checkout, name='process_checkout'),
+    path('add-review/', forms.add_review, name='add_review'),
 
     path('add-to-wishlist/', forms.add_to_wishlist, name='add_to_wishlist'),
     path('remove-wishlist-item/', forms.remove_item_from_wishlist, name='remove_item_from_wishlist'),

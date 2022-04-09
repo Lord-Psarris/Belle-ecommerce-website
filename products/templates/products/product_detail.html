@@ -103,11 +103,19 @@
                                 </div>
                             <!-- <div class="product-sku">SKU: <span class="variant-sku">19115-rdxs</span></div> -->
                             <div class="product-review">
-                                <a class="reviewLink" href="#tab2"><i
-                                    class="font-13 fa fa-star"></i><i class="font-13 fa fa-star"></i><i
-                                    class="font-13 fa fa-star"></i><i class="font-13 fa fa-star-o"></i><i
-                                    class="font-13 fa fa-star-o"></i><span
-                                    class="spr-badge-caption">6 reviews</span>
+                                <a class="reviewLink" href="#tab2">
+                                    {% if has_reviews %}
+                                    {% for star in total_reviews %}
+                                    {% if star %}
+                                    <i class="font-13 fa fa-star"></i>
+                                    {% else %}
+                                    <i class="font-13 fa fa-star-o"></i>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <span class="spr-badge-caption">{{ review_count }} reviews</span>
+                                    {% else %}
+                                    No reviews for this product yet
+                                    {% endif %}
                                 </a>
                             </div>
                         </div>
@@ -276,38 +284,51 @@
                                     <div class="spr-container">
                                         <div class="spr-header clearfix">
                                             <div class="spr-summary">
-                                                        <span class="product-review"><a class="reviewLink"><i
-                                                                class="font-13 fa fa-star"></i><i
-                                                                class="font-13 fa fa-star"></i><i
-                                                                class="font-13 fa fa-star"></i><i
-                                                                class="font-13 fa fa-star-o"></i><i
-                                                                class="font-13 fa fa-star-o"></i> </a><span
-                                                                class="spr-summary-actions-togglereviews">Based on 6 reviews456</span></span>
+                                                <span class="product-review">
+                                                    <a class="reviewLink" href="#">
+                                                        {% if has_reviews %}
+                                                        {% for star in total_reviews %}
+                                                        {% if star %}
+                                                        <i class="font-13 fa fa-star"></i>
+                                                        {% else %}
+                                                        <i class="font-13 fa fa-star-o"></i>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                        {% else %}
+                                                        No reviews for this product yet
+                                                        {% endif %}
+                                                    </a>
+                                                    {% if has_reviews %}
+                                                    <span class="spr-summary-actions-togglereviews">Based on {{ review_count}} reviews</span>
+                                                    {% endif %}
+                                                </span>
                                                 <span class="spr-summary-actions">
-                                                                <a href="#" class="spr-summary-actions-newreview btn">Write a review</a>
+                                                                <a href="#new-review-form" onclick="$('#tab4').removeClass('d-none')" class="spr-summary-actions-newreview btn">Write a review</a>
                                                             </span>
                                             </div>
                                         </div>
-                                        <div class="spr-content">
+                                        <div class="spr-content d-none" id="tab4">
                                             <div class="spr-form clearfix">
-                                                <form method="post" action="#" id="new-review-form"
+                                                <form method="post" action="{% url 'products:add_review' %}?return_url={{ request.path }}" id="new-review-form"
                                                       class="new-review-form">
+                                                      {% csrf_token %}
+                                                      <input type="text" name="pk" value="{{ product_data.pk }}" hidden>
                                                     <h3 class="spr-form-title">Write a review</h3>
                                                     <fieldset class="spr-form-contact">
                                                         <div class="spr-form-contact-name">
                                                             <label class="spr-form-label"
                                                                    for="review_author_10508262282">Name</label>
-                                                            <input class="spr-form-input spr-form-input-text "
+                                                            <input required class="spr-form-input spr-form-input-text "
                                                                    id="review_author_10508262282" type="text"
-                                                                   name="review[author]" value=""
+                                                                   name="name" value=""
                                                                    placeholder="Enter your name">
                                                         </div>
                                                         <div class="spr-form-contact-email">
                                                             <label class="spr-form-label"
                                                                    for="review_email_10508262282">Email</label>
-                                                            <input class="spr-form-input spr-form-input-email "
+                                                            <input required class="spr-form-input spr-form-input-email "
                                                                    id="review_email_10508262282" type="email"
-                                                                   name="review[email]" value=""
+                                                                   name="email" value=""
                                                                    placeholder="john.smith@example.com">
                                                         </div>
                                                     </fieldset>
@@ -315,13 +336,15 @@
                                                         <div class="spr-form-review-rating">
                                                             <label class="spr-form-label">Rating</label>
                                                             <div class="spr-form-input spr-starrating">
-                                                                <div class="product-review"><a
-                                                                        class="reviewLink" href="#"><i
-                                                                        class="fa fa-star-o"></i><i
-                                                                        class="font-13 fa fa-star-o"></i><i
-                                                                        class="font-13 fa fa-star-o"></i><i
-                                                                        class="font-13 fa fa-star-o"></i><i
-                                                                        class="font-13 fa fa-star-o"></i></a>
+                                                                <input required type="text" value="0" id="reviewCount" name="rating" hidden>
+                                                                <div class="product-review">
+                                                                    <a href="#" class="reviewLink">
+                                                                        <i id="1" class="font-13 fa fa-star-o review"></i>
+                                                                        <i id="2" class="font-13 fa fa-star-o review"></i>
+                                                                        <i id="3" class="font-13 fa fa-star-o review"></i>
+                                                                        <i id="4" class="font-13 fa fa-star-o review"></i>
+                                                                        <i id="5" class="font-13 fa fa-star-o review"></i> 
+                                                                    </a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -330,9 +353,9 @@
                                                             <label class="spr-form-label"
                                                                    for="review_title_10508262282">Review
                                                                 Title</label>
-                                                            <input class="spr-form-input spr-form-input-text "
+                                                            <input required class="spr-form-input spr-form-input-text "
                                                                    id="review_title_10508262282" type="text"
-                                                                   name="review[title]" value=""
+                                                                   name="title" value=""
                                                                    placeholder="Give your review a title">
                                                         </div>
 
@@ -345,7 +368,7 @@
                                                                                 class="spr-form-input spr-form-input-textarea "
                                                                                 id="review_body_10508262282"
                                                                                 data-product-id="10508262282"
-                                                                                name="review[body]" rows="10"
+                                                                                name="body" rows="10"
                                                                                 placeholder="Write your comments here"></textarea>
                                                             </div>
                                                         </div>
@@ -357,78 +380,31 @@
                                                     </fieldset>
                                                 </form>
                                             </div>
-                                            <div class="spr-reviews">
-                                                <div class="spr-review">
-                                                    <div class="spr-review-header">
-                                                                <span class="product-review spr-starratings spr-review-header-starratings"><span
-                                                                        class="reviewLink"><i class="fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i></span></span>
-                                                        <h3 class="spr-review-header-title">Lorem ipsum dolor
-                                                            sit amet</h3>
-                                                        <span class="spr-review-header-byline"><strong>dsacc</strong> on <strong>Apr 09, 2019</strong></span>
-                                                    </div>
-                                                    <div class="spr-review-content">
-                                                        <p class="spr-review-content-body">Lorem ipsum dolor sit
-                                                            amet, consectetur adipiscing elit, sed do eiusmod
-                                                            tempor incididunt ut labore et dolore magna aliqua.
-                                                            Ut enim ad minim veniam, quis nostrud exercitation
-                                                            ullamco laboris nisi ut aliquip ex ea commodo
-                                                            consequat.</p>
-                                                    </div>
-                                                </div>
-                                                <div class="spr-review">
-                                                    <div class="spr-review-header">
-                                                                <span class="product-review spr-starratings spr-review-header-starratings"><span
-                                                                        class="reviewLink"><i class="fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i></span></span>
-                                                        <h3 class="spr-review-header-title">Lorem Ipsum is
-                                                            simply dummy text of the printing</h3>
-                                                        <span class="spr-review-header-byline"><strong>larrydude</strong> on <strong>Dec 30, 2018</strong></span>
-                                                    </div>
+                                        </div>
 
-                                                    <div class="spr-review-content">
-                                                        <p class="spr-review-content-body"><br><br>Lorem Ipsum
-                                                            is simply dummy text of the printing and typesetting
-                                                            industry. Lorem Ipsum has been the industry's
-                                                            standard dummy text ever since the 1500s, when an
-                                                            unknown printer took a galley of type and scrambled.<br><br>
-                                                            Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry.<br><br>Lorem Ipsum is simply
-                                                            dummy text of the printing and typesetting industry.<br>
-                                                        </p>
-                                                    </div>
+                                        <div class="spr-reviews">
+                                            {% for review in reviews %}
+                                            <div class="spr-review">
+                                                <div class="spr-review-header">
+                                                            <span class="product-review spr-starratings spr-review-header-starratings">
+                                                                <span>
+                                                                    {% for star in review.rating %}
+                                                                    {% if star %}
+                                                                    <i class="font-13 fa fa-star"></i>
+                                                                    {% else %}
+                                                                    <i class="font-13 fa fa-star-o"></i>
+                                                                    {% endif %}
+                                                                    {% endfor %}
+                                                                </span>
+                                                            </span>
+                                                    <h3 class="spr-review-header-title">{{ review.title }}</h3>
+                                                    <span class="spr-review-header-byline"><strong>{{ review.name }}</strong> on <strong>{{ review.date }}</strong></span>
                                                 </div>
-                                                <div class="spr-review">
-                                                    <div class="spr-review-header">
-                                                                <span class="product-review spr-starratings spr-review-header-starratings"><span
-                                                                        class="reviewLink"><i class="fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i><i
-                                                                        class="font-13 fa fa-star"></i></span></span>
-                                                        <h3 class="spr-review-header-title">Neque porro quisquam
-                                                            est qui dolorem ipsum quia dolor sit amet,
-                                                            consectetur, adipisci velit...</h3>
-                                                        <span class="spr-review-header-byline"><strong>quoctri1905</strong> on <strong>Dec 30, 2018</strong></span>
-                                                    </div>
-
-                                                    <div class="spr-review-content">
-                                                        <p class="spr-review-content-body">Lorem Ipsum is simply
-                                                            dummy text of the printing and typesetting industry.
-                                                            Lorem Ipsum has been the industry's standard dummy
-                                                            text ever since the 1500s, when an unknown printer
-                                                            took a galley of type and scrambled.<br>
-                                                            <br>Lorem Ipsum is simply dummy text of the printing
-                                                            and typesetting industry.</p>
-                                                    </div>
+                                                <div class="spr-review-content">
+                                                    <p class="spr-review-content-body">{{ review.body }}</p>
                                                 </div>
                                             </div>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </div>
@@ -636,11 +612,17 @@
                             <!-- End product price -->
 
                             <div class="product-review">
+                                {% if item.has_reviews %}
+                                {% for star in item.total_reviews %}
+                                {% if star %}
                                 <i class="font-13 fa fa-star"></i>
-                                <i class="font-13 fa fa-star"></i>
-                                <i class="font-13 fa fa-star"></i>
+                                {% else %}
                                 <i class="font-13 fa fa-star-o"></i>
-                                <i class="font-13 fa fa-star-o"></i>
+                                {% endif %}
+                                {% endfor %}
+                                {% else %}
+                                No reviews yet
+                                {% endif %}
                             </div>
                         </div>
                         <!-- End product details -->
@@ -687,26 +669,6 @@
                                 <!-- End product label -->
                             </a>
                             <!-- end product image -->
-
-                            <!-- Start product button -->
-                            <form class="variants add" action="{% url 'products:add_to_cart' %}?return_url={{ request.path }}" method="post">
-                                {% csrf_token %}
-                                <input type="text" name="pk" value="{{ item.pk }}" hidden>
-                                <button class="btn btn-addto-cart" type="submit"
-                                        tabindex="0">Add to cart
-                                </button>
-                            </form>
-                            <div class="button-set">
-                                <form action="{% url 'products:add_to_wishlist' %}?return_url={{ request.path }}" method="post" class="wishlist-btn">
-                                    {% csrf_token %}
-                                    <input type="text" name="pk" value="{{ item.pk }}" hidden>
-                                    <button class="btn btn--secondary cartIcon btn-addto-cart"
-                                            type="submit">
-                                        <i class="icon anm anm-heart-l"></i>
-                                    </button>
-                                </form>
-                            </div>
-                            <!-- end product button -->
                         </div>
                         <!-- end product image -->
 

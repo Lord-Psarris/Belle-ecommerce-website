@@ -1,7 +1,8 @@
 import json
 import random
+from datetime import datetime
 
-from .models import Product, Cart
+from .models import Product, Cart, ProductReview
 
 
 def get_best_selling_products(include_out_of_stock=False, order='descending'):
@@ -34,6 +35,8 @@ def get_best_selling_products(include_out_of_stock=False, order='descending'):
             'sales_count': product.sales_count,
             'image1': product.productimage_set.all()[0].file,
             'image2': product.productimage_set.all()[1].file,
+            'total_reviews': get_all_product_reviews_ratings(product),
+            'has_reviews': True if len(get_all_product_reviews(product)) != 0 else False
         }
         if include_out_of_stock is False:
             if item['out_of_stock'] is False:
@@ -67,6 +70,8 @@ def get_newly_arrived_products(include_out_of_stock=False):
             'sales_count': product.sales_count,
             'image1': product.productimage_set.all()[0].file,
             'image2': product.productimage_set.all()[1].file,
+            'total_reviews': get_all_product_reviews_ratings(product),
+            'has_reviews': True if len(get_all_product_reviews(product)) != 0 else False
         }
         if include_out_of_stock is False:
             if item['out_of_stock'] is False:
@@ -100,6 +105,8 @@ def get_on_sale_products(include_out_of_stock=False):
             'sales_count': product.sales_count,
             'image1': product.productimage_set.all()[0].file,
             'image2': product.productimage_set.all()[1].file,
+            'total_reviews': get_all_product_reviews_ratings(product),
+            'has_reviews': True if len(get_all_product_reviews(product)) != 0 else False
         }
         if include_out_of_stock is False:
             if item['out_of_stock'] is False:
@@ -133,6 +140,8 @@ def get_all_products(include_out_of_stock=False):
             'sales_count': product.sales_count,
             'image1': product.productimage_set.all()[0].file,
             'image2': product.productimage_set.all()[1].file,
+            'total_reviews': get_all_product_reviews_ratings(product),
+            'has_reviews': True if len(get_all_product_reviews(product)) != 0 else False
         }
         if include_out_of_stock is False:
             if item['out_of_stock'] is False:
@@ -170,6 +179,8 @@ def get_products_based_on_category(category):
             'sales_count': product.sales_count,
             'image1': product.productimage_set.all()[0].file,
             'image2': product.productimage_set.all()[1].file,
+            'total_reviews': get_all_product_reviews_ratings(product),
+            'has_reviews': True if len(get_all_product_reviews(product)) != 0 else False
         }
         if item['out_of_stock'] is False:
             returned_list.append(item)
@@ -229,3 +240,62 @@ def update_cart_item_quantity(cart_item_id, new_quantity):
 def clear_cart_data(user):
     Cart.objects.filter(user=user).delete()
     return
+
+
+def get_all_product_reviews(product):
+    all_reviews = ProductReview.objects.filter(product=product).all()
+    returned_list = []
+
+    if not all_reviews:
+        return []
+
+    for review in all_reviews:
+        ratings = []
+        for i in range(1, 6):
+            if i <= review.rating:
+                ratings.append(True)
+            else:
+                ratings.append(False)
+
+        item = {
+            'name': review.name,
+            'title': review.title,
+            'date': datetime.strftime(review.review_date, '%d %B %Y'),
+            'body': review.body,
+            'rating': ratings,
+            'star_count': review.rating
+        }
+        returned_list.append(item)
+
+    return returned_list
+
+
+def get_all_product_reviews_ratings(product):
+    all_reviews = get_all_product_reviews(product)
+    total_product_rating = 0
+    total_product_rating_bool = []
+
+    if not all_reviews:
+        return [False, False, False, False, False]
+
+    count_interval = len(all_reviews)
+    total_review_count = sum(i['star_count'] for i in all_reviews)
+    max_review_count = len(all_reviews) * 5
+
+    prev_count = 1
+    review_count = 1
+
+    for current_index in range(1, max_review_count, count_interval):
+        if prev_count <= total_review_count <= current_index:
+            total_product_rating = review_count
+            break
+        review_count += 1
+
+    for i in range(1, 6):
+        if i <= total_product_rating:
+            total_product_rating_bool.append(True)
+        else:
+            total_product_rating_bool.append(False)
+
+    return total_product_rating_bool
+

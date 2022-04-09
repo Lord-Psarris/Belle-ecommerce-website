@@ -2,12 +2,13 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from .models import *
 
 # Create your views here.
-from .reuseable_functions import get_all_products, get_on_sale_products, get_best_selling_products, \
-    get_products_based_on_category, get_all_cart_items, get_suggested_products
+from .reuseable_functions import get_all_products, get_on_sale_products, get_best_selling_products, get_all_cart_items, \
+    get_suggested_products, get_all_product_reviews, \
+    get_all_product_reviews_ratings
 
 
 def all_products(request):
@@ -67,6 +68,9 @@ def view_product_details(request, short_name):
             slashed_price = product.price - round(product.price * (product.discounted_percent / 100))
             colors_available = json.loads(str(product.colors_available).strip("' ").replace('\'', '\"'))
             sizes_available = json.loads(str(product.sizes_available).strip("' ").replace('\'', '\"'))
+            reviews = get_all_product_reviews(product)
+            total_reviews = get_all_product_reviews_ratings(product)
+            review_count = len(reviews)
 
             product_data = {
                 'pk': product.id,
@@ -89,9 +93,11 @@ def view_product_details(request, short_name):
                 'saved_amount': round(product.price - slashed_price, 2),
             }
 
-            already_viewed_count = RecentlyViewedProduct.objects.filter(product=product, session_key=request.session.session_key).count()
+            already_viewed_count = RecentlyViewedProduct.objects.filter(product=product,
+                                                                        session_key=request.session.session_key).count()
             if already_viewed_count == 0:
-                new_recently_viewed_product = RecentlyViewedProduct(session_key=request.session.session_key, product=product)
+                new_recently_viewed_product = RecentlyViewedProduct(session_key=request.session.session_key,
+                                                                    product=product)
                 new_recently_viewed_product.save()
 
             recently_viewed_items = []
@@ -108,10 +114,15 @@ def view_product_details(request, short_name):
                 }
 
                 recently_viewed_items.append(item)
+
             data = {
                 'product_data': product_data,
                 'recently_viewed_items': recently_viewed_items,
                 'suggested_products': suggested_products,
+                'reviews': reviews,
+                'total_reviews': total_reviews,
+                'has_reviews': True if review_count != 0 else False,
+                'review_count': review_count
             }
             return render(request, 'products/product_detail.html', data)
     raise Http404

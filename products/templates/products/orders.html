@@ -30,9 +30,11 @@
                             {% for item in order_items %}
                             <tr>
                                 <td class="product-thumbnail text-center">
-                                    <a href="#"><img src="{% static '' %}media/{{ item.image }}" alt="" title="" /></a>
+                                    <a href="{% url 'products:view_product_details' short_name=item.short_name %}">
+                                        <img src="{% static '' %}media/{{ item.image }}" alt="" title="" />
+                                    </a>
                                 </td>
-                                <td class="product-name"><h4 class="no-margin"><a href="{% url 'products:view_product_details' short_name=item.short_name %}">Minerva Dress black</a></h4></td>
+                                <td class="product-name"><h4 class="no-margin"><a href="{% url 'products:view_product_details' short_name=item.short_name %}">{{ item.name }}</a></h4></td>
                                 <td class="product-price text-center"><span class="amount">${{ item.price }}</span></td>
                                 <td class="stock text-center">
                                     <span class="in-stock">{{ item.status }}</span>

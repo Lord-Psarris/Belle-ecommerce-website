@@ -294,13 +294,22 @@
                                             {% endif %}
                                         </div>
                                         <!-- End product price -->
+                                        {% if not product.out_of_stock %}
                                         <div class="product-review">
-                                            <i class="font-13 fa fa-star"></i>
-                                            <i class="font-13 fa fa-star"></i>
-                                            <i class="font-13 fa fa-star"></i>
-                                            <i class="font-13 fa fa-star-o"></i>
-                                            <i class="font-13 fa fa-star-o"></i>
+                                        {% if product.has_reviews %}
+                                        {% for star in product.total_reviews %}
+                                        {% if star %}
+                                        <i class="font-13 fa fa-star"></i>
+                                        {% else %}
+                                        <i class="font-13 fa fa-star-o"></i>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% else %}
+                                        No reviews yet
+                                        {% endif %}
                                         </div>
+                                        {% endif %}
+                                        
                                         <!-- product button -->
                                         {% if not product.out_of_stock %}
                                         <div class="button-set">

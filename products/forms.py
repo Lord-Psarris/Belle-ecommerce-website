@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 
-from products.models import Product, Cart, Wishlist, Orders, OrderItems
+from products.models import Product, Cart, Wishlist, Orders, OrderItems, ProductReview
 from products.reuseable_functions import update_cart_item_quantity, clear_cart_data, get_all_cart_items
 
 
@@ -140,3 +140,16 @@ def process_checkout(request):
 
     Cart.objects.filter(user=request.user).delete()
     return HttpResponseRedirect(reverse('products:order_complete'))
+
+
+def add_review(request):
+    data = request.POST
+    product = Product.objects.get(pk=data['pk'])
+    return_url = request.GET.get('return_url')
+
+    new_review = ProductReview(product=product, name=data['name'], title=data['title'], email=data['email'],
+                               body=data['body'], rating=data['rating'])
+    new_review.save()
+
+    messages.success(request, 'Thank you for reviewing this product')
+    return HttpResponseRedirect(return_url)
