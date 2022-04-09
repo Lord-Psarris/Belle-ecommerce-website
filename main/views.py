@@ -12,6 +12,12 @@ def home(request):
     best_selling_products = get_best_selling_products()[:10]
     on_sale_products = get_on_sale_products()[:10]
     new_arriving_products = get_newly_arrived_products()[:10]
+
+    # if a user isn't logged in, there is no session key. So for non-logged-in users a session key is created
+    # for the recently viewed model
+    if not request.session.exists(request.session.session_key):
+        request.session.create()
+
     suggested_products = get_suggested_products(request.session.session_key)
 
     data = {
@@ -26,6 +32,27 @@ def home(request):
 
 
 def search(request):
+    # ['white', 'brown', 'black', 'darkRed']
+    # ['red', 'brown', 'black', 'darkRed', 'blue']
+    # ['white', 'black', 'grey']
+    # ['red', 'blue', 'pink', 'green']
+    # ['red', 'brown', 'black', 'pink']
+    # ['black']
+    # ['white', 'red']
+    # ['black', 'pink', 'red', 'grey']
+    # ['green', 'blue', 'red', 'white']
+    # ['red', 'blue', 'black', 'white']
+    #
+    # ['X', 'XL', 'XLL', 'M', 'S', 'XXXL', 'XXL', 'XS']
+    # ['X', 'XL', 'XLL', 'M']
+    # ['S', 'XXXL', 'XXL', 'XS']
+    # ['X', 'S', 'XXXL', 'XS']
+    # ['X', 'XL', 'XXL', 'XS']
+    # ['X', 'XL', 'XLL', 'XXXL', 'XXL']
+    # ['XXL', 'XS']
+    # ['X', 'XXL', 'XS']
+    # ['X', 'XL', 'XLL', 'M', 'S', 'XXXL']
+    # ['X', 'XL', 'XLL', 'M', 'S', 'XS']
     """
     When a user enters a query, first check if that query matches any of the sites categories
     If so, the return products that belong to that category. Otherwise return products that match
