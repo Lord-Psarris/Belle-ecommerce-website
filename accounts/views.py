@@ -29,12 +29,16 @@ def register(request):
 def login(request):
     if request.POST:
         data = request.POST
+
+        # getting the page the user needs login access to
         request.session['next'] = request.GET.get('next')
 
+        # verifying user has an account
         if Users.objects.filter(email=data['email']).count() == 0:
             messages.error(request, 'Email doesn\'t exist in our database')
             return HttpResponseRedirect(reverse('auth:login'))
 
+        # authenticating user
         user = auth.authenticate(email=data['email'], password=data['password'])
         if user is not None:
             auth.login(request, user)

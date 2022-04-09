@@ -70,6 +70,11 @@ def view_product_details(request, short_name):
             sizes_available = json.loads(str(product.sizes_available).strip("' ").replace('\'', '\"'))
             reviews = get_all_product_reviews(product)
             total_reviews = get_all_product_reviews_ratings(product)
+
+            if not request.session.exists(request.session.session_key):
+                request.session.create()
+            session_key = request.session.session_key
+            print(session_key)
             review_count = len(reviews)
 
             product_data = {
@@ -94,15 +99,15 @@ def view_product_details(request, short_name):
             }
 
             already_viewed_count = RecentlyViewedProduct.objects.filter(product=product,
-                                                                        session_key=request.session.session_key).count()
+                                                                        session_key=session_key).count()
             if already_viewed_count == 0:
-                new_recently_viewed_product = RecentlyViewedProduct(session_key=request.session.session_key,
+                new_recently_viewed_product = RecentlyViewedProduct(session_key=session_key,
                                                                     product=product)
                 new_recently_viewed_product.save()
 
             recently_viewed_items = []
 
-            for viewed_product in RecentlyViewedProduct.objects.filter(session_key=request.session.session_key).all():
+            for viewed_product in RecentlyViewedProduct.objects.filter(session_key=session_key).all():
                 item = {
                     'name': viewed_product.product.name,
                     'short_name': viewed_product.product.get_short_name(),

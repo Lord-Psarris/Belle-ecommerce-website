@@ -215,12 +215,19 @@
                             <!-- End Product Action -->
                         </form>
                         <div class="display-table shareRow">
-                            <div class="display-table-cell medium-up--one-third">
+                            <form id="wishlistForm" action="{% url 'products:add_to_wishlist' %}?return_url={{ request.path }}" method="post" class="display-table-cell medium-up--one-third">
+                                {% csrf_token %}
+                                <input type="text" name="pk" value="{{ product_data.pk }}" hidden>
+                                <a onclick="$('#wishlistForm').submit()" class="wishlist add-to-wishlist" href="#" title="Add to Wishlist"><i
+                                            class="icon anm anm-heart-l" aria-hidden="true"></i>
+                                        <span>Add to Wishlist</span></a> 
+                            </form>
+                            <!-- <div class="">
                                 <div class="wishlist-btn">
                                     <a class="wishlist add-to-wishlist" href="#" title="Add to Wishlist"><i
                                             class="icon anm anm-heart-l" aria-hidden="true"></i>
-                                        <span>Add to Wishlist</span></a>
-                                </div>
+                                        <span>Add to Wishlist</span></a> 
+                                </div> -->
                             </div>
                             <div class="display-table-cell text-right">
                                 <div class="social-sharing">

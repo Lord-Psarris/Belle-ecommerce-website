@@ -3,11 +3,11 @@ import json
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 
 from main.models import NewsletterSubscriber
 from products.models import Product
-from products.reuseable_functions import get_on_sale_products, get_best_selling_products, get_newly_arrived_products, \
-    get_products_based_on_category, get_suggested_products
+from products.reuseable_functions import *
 
 
 def home(request):
@@ -78,3 +78,39 @@ def subscribe_to_newsletter(request):
 
     messages.error(request, 'You have already subscribed')
     return HttpResponseRedirect(return_url)
+
+
+def blog(request):
+    if request.POST:
+        email = request.POST['email']
+
+        old_subscriber = NewsletterSubscriber.objects.filter(email=email).first()
+        if old_subscriber is None:
+            new_subscriber = NewsletterSubscriber(email=email)
+            new_subscriber.save()
+
+            messages.success(request, 'Thank you for subscribing to our newsletter')
+            return HttpResponseRedirect(reverse('main:blog'))
+
+        messages.error(request, 'You have already subscribed')
+        return HttpResponseRedirect(reverse('main:blog'))
+
+    return render(request, 'main/coming_soon.html')
+
+
+def contact(request):
+    if request.POST:
+        data = request.POST
+
+        #send email data
+        messages.success(request, 'thank you, your message has been sent')
+        return HttpResponseRedirect(reverse('main:contact'))
+    return render(request, 'main/contact.html')
+
+
+def faq(request):
+    return render(request, 'main/faqs.html')
+
+
+def about(request):
+    return render(request, 'main/about.html')
