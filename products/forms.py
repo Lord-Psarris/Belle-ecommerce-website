@@ -1,15 +1,23 @@
 import json
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 
-from products.models import Product, Cart, Wishlist, Orders, OrderItems, ProductReview
+from products.models import *
 from products.reuseable_functions import update_cart_item_quantity, clear_cart_data, get_all_cart_items
 
 
 def add_to_cart(request):
+    """
+    When a user clicks any of the add to cart buttons, first verify if the user is logged in as only logged-in users
+    can add to cart. Afterwards check if the item is already in the cart. If the user doesnt specify the size or color
+    of the product they want, it means they want the default so you set the size and color data to the default values, in
+    this case the first option on their respective lists
+
+    :param request:
+    :return: HttpResponse
+    """
     return_url = request.GET.get('return_url')
     if not request.user.is_authenticated:
         messages.success(request, 'You have to login to add to your cart')
@@ -40,6 +48,11 @@ def add_to_cart(request):
 
 
 def get_number_of_cart_items(request):
+    """
+    This is used to get the number of items in the cart
+    :param request:
+    :return: JsonResponse
+    """
     if request.user.is_authenticated:
         cart_items_count = Cart.objects.filter(user=request.user).count()
         return JsonResponse({'count': cart_items_count}, status=200)
@@ -47,6 +60,12 @@ def get_number_of_cart_items(request):
 
 
 def update_cart_data(request):
+    """
+    When a user clicks the update cart button, they'll send a list of items to be updated. loop through the list and update
+    the items accordingly
+    :param request:
+    :return: HttpResponse
+    """
     data = request.POST
 
     for cart_item_id, quantity in data.items():
@@ -121,13 +140,22 @@ def use_coupon(request):
 
 
 def process_checkout(request):
+    """
+    Firstly check all required fields and ensure they are filled, then process the payment with something a module like
+    stripe or rave_python (flutterwave). Afterwards create new order and add its items from the cart. Then empty the
+    cart
+
+    :param request:
+    :return: HttpResponse
+    """
     data = request.POST
     cart_items = request.user.cart_set.all()
-    print(data)
 
     if any(item == '' for key, item in data.items()):
         messages.error(request, 'Please fill in all required fields')
         return HttpResponseRedirect(reverse('products:checkout'))
+
+    # process payment using user card
 
     new_order = Orders(user=request.user, telephone=data['telephone'], address=data['address'], city=data['city'],
                        post_code=data['postcode'], state=data['state'], country=data['country'],

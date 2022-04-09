@@ -8,14 +8,20 @@ urlpatterns = [
 
     path('product/<str:short_name>', views.view_product_details, name='view_product_details'),
 
+    path('collections/', views.collections, name='collections'),
+    path('collections/<str:collection>', views.collection_view, name='collection_view'),
+
     path('cart/', views.cart, name='cart'),
-    path('wishlist/', views.wishlist, name='wishlist'),
     path('checkout/', views.checkout, name='checkout'),
     path('orders/', views.orders, name='orders'),
     path('order-complete/', views.order_complete, name='order_complete'),
 
+    path('wishlist/', views.wishlist, name='wishlist'),
+
+    # forms
     path('use-coupon/', forms.use_coupon, name='use_coupon'),
     path('process-checkout/', forms.process_checkout, name='process_checkout'),
+
     path('add-review/', forms.add_review, name='add_review'),
 
     path('add-to-wishlist/', forms.add_to_wishlist, name='add_to_wishlist'),
@@ -28,6 +34,4 @@ urlpatterns = [
     path('get-cart-items/', forms.get_cart_items, name='get_cart_items'),
     path('remove-cart-item/', forms.remove_item_from_cart, name='remove_item_from_cart'),
 
-    path('collections/', views.collections, name='collections'),
-    path('collections/<str:collection>', views.collection_view, name='collection_view'),
 ]

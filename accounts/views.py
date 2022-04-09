@@ -30,7 +30,7 @@ def login(request):
     if request.POST:
         data = request.POST
 
-        # getting the page the user needs login access to
+        # saving the page the user needs login access to
         request.session['next'] = request.GET.get('next')
 
         # verifying user has an account
@@ -43,10 +43,12 @@ def login(request):
         if user is not None:
             auth.login(request, user)
 
+            # redirecting user to previous page if there is
             if request.GET.get('next'):
                 return HttpResponseRedirect(request.GET.get('next'))
             elif request.session.get('next'):
                 return HttpResponseRedirect(request.session.get('next'))
+
             return HttpResponseRedirect(reverse('main:home'))
 
         messages.error(request, 'Incorrect password')

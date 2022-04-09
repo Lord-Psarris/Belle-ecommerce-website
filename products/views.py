@@ -1,24 +1,22 @@
-import json
-
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, redirect
+
 from .models import *
+from .reuseable_functions import *
+
 
 # Create your views here.
-from .reuseable_functions import get_all_products, get_on_sale_products, get_best_selling_products, get_all_cart_items, \
-    get_suggested_products, get_all_product_reviews, \
-    get_all_product_reviews_ratings
-
-
 def all_products(request):
     products = []
     all_shop_products = get_all_products(include_out_of_stock=True)
     popular_products = get_best_selling_products(include_out_of_stock=False, order='descending')[:4]
 
+    # if the user only wants products on sale
     if request.GET.get('on-sale'):
         all_shop_products = get_on_sale_products(include_out_of_stock=True)
 
+    # if the user wants the products sorted a particular way
     if request.GET.get('sort'):
         sort = request.GET.get('sort')
         if sort == 'a-z':
@@ -33,6 +31,8 @@ def all_products(request):
             all_shop_products = sorted(all_shop_products, key=lambda x: x['sales_count'])
 
     for product in all_shop_products:
+
+        # if the user only wants products of a particular proce range
         if request.GET.get('price'):
             price_range = request.GET.get('price').replace('%24', '').split('-')
             min_price = int(price_range[0].strip('+$ '))
@@ -41,6 +41,8 @@ def all_products(request):
             if product['price'] not in range(min_price, max_price) and product['slashed_price'] not in range(
                     min_price, max_price):
                 continue
+
+        # if user only wants products of specific category
         if request.GET.get('category'):
             if product['category'] == request.GET.get('category'):
                 products.append(product)
@@ -60,6 +62,16 @@ def collection_view(request, collection):
 
 
 def view_product_details(request, short_name):
+    """
+    The product view page is gotten by its name stripped of spaces and set to lower letters. a function was created in
+    the model to convert this format. if the name gotten from the url matches any product name, then the necessary data
+    for the page is sorted into a simple format. Firstly, the discounts, colors and sizes are all set. Then the
+    individual as well as total product reviews are also set. The sessions key is set and retrieved in order to fill in
+    data for the recenlty viewed model
+    :param request:
+    :param short_name:
+    :return:
+    """
     products = Product.objects.all()
     suggested_products = get_suggested_products(request.session.session_key)
 
@@ -68,14 +80,17 @@ def view_product_details(request, short_name):
             slashed_price = product.price - round(product.price * (product.discounted_percent / 100))
             colors_available = json.loads(str(product.colors_available).strip("' ").replace('\'', '\"'))
             sizes_available = json.loads(str(product.sizes_available).strip("' ").replace('\'', '\"'))
+
             reviews = get_all_product_reviews(product)
             total_reviews = get_all_product_reviews_ratings(product)
+            review_count = len(reviews)
 
+            # if a user isn't logged in, there is no session key. So for non-logged-in users a session key is created
+            # for the recently viewed model
             if not request.session.exists(request.session.session_key):
                 request.session.create()
+
             session_key = request.session.session_key
-            print(session_key)
-            review_count = len(reviews)
 
             product_data = {
                 'pk': product.id,
@@ -98,6 +113,7 @@ def view_product_details(request, short_name):
                 'saved_amount': round(product.price - slashed_price, 2),
             }
 
+            # adding the product to the list of recently viewed products for the session
             already_viewed_count = RecentlyViewedProduct.objects.filter(product=product,
                                                                         session_key=session_key).count()
             if already_viewed_count == 0:
@@ -107,6 +123,7 @@ def view_product_details(request, short_name):
 
             recently_viewed_items = []
 
+            # retrieving all recently viewed products
             for viewed_product in RecentlyViewedProduct.objects.filter(session_key=session_key).all():
                 item = {
                     'name': viewed_product.product.name,
@@ -136,7 +153,7 @@ def view_product_details(request, short_name):
 @login_required(login_url='/auth/login/')
 def cart(request):
     cart_items = get_all_cart_items(request.user)
-    subtotal = round(sum(item['total_price'] for item in cart_items), 2)
+    subtotal = sum(item['total_price'] for item in cart_items)
     return render(request, 'products/cart.html', {'cart_items': cart_items, 'subtotal': subtotal})
 
 
@@ -147,9 +164,9 @@ def wishlist(request):
 
     for item in all_wishlist_items:
         if item.product.has_discount:
-            price = round(item.product.price - round(item.product.price * (item.product.discounted_percent / 100)), 2)
+            price = item.product.price - round(item.product.price * (item.product.discounted_percent / 100))
         else:
-            price = round(item.product.price, 2)
+            price = item.product.price
 
         data = {
             'pk': item.id,
@@ -167,7 +184,7 @@ def wishlist(request):
 def checkout(request):
     cart_items = get_all_cart_items(request.user)
     subtotal = sum(item['total_price'] for item in cart_items)
-    shipping_fee = round(subtotal * 0.12)
+    shipping_fee = round(subtotal * 0.12)  # this is set to 0 if worldwide shipping is free
     sum_total = subtotal + shipping_fee
 
     data = {'cart_items': cart_items, 'subtotal': subtotal, 'shipping_fee': shipping_fee, 'sum_total': sum_total}

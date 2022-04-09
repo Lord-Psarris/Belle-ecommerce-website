@@ -1,16 +1,14 @@
-import json
-
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
 from main.models import NewsletterSubscriber
-from products.models import Product
 from products.reuseable_functions import *
 
 
 def home(request):
+    # getting products for homepage sections
     best_selling_products = get_best_selling_products()[:10]
     on_sale_products = get_on_sale_products()[:10]
     new_arriving_products = get_newly_arrived_products()[:10]
@@ -21,17 +19,25 @@ def home(request):
         'on_sale_products': on_sale_products,
         'new_arriving_products': new_arriving_products,
         'suggested_products': suggested_products,
-        'home': True
+        'home': True  # this is needed to set the classic header class in base.html
     }
 
     return render(request, 'main/home.html', data)
 
 
 def search(request):
+    """
+    When a user enters a query, first check if that query matches any of the sites categories
+    If so, the return products that belong to that category. Otherwise return products that match
+    the query
+
+    :param request:
+    :return: HttpResponse
+    """
     search_query = request.GET.get('query')
     categories = ['clothing', 'cosmetics', 'bags', 'shoes', 'accessories', 'jewellery']
 
-    if search_query in categories:
+    if search_query.lower() in categories:
         results = get_products_based_on_category(search_query)
     else:
         all_product_results = Product.objects.filter(name__icontains=search_query).all()
@@ -39,6 +45,8 @@ def search(request):
 
         if all_product_results is not None:
             for product in all_product_results:
+
+                # sorting data for the frontend
                 item = {
                     'pk': product.id,
                     'name': product.name,
@@ -99,10 +107,17 @@ def blog(request):
 
 
 def contact(request):
+    """
+    When a user sends a contact form, the data could be added to an email queue on a backend service
+    like celery or apscheduler. Or simply just added to the database for the admin to read
+
+    :param request:
+    :return: HttpResponse
+    """
     if request.POST:
         data = request.POST
+        # process contact form data
 
-        #send email data
         messages.success(request, 'thank you, your message has been sent')
         return HttpResponseRedirect(reverse('main:contact'))
     return render(request, 'main/contact.html')

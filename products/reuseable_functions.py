@@ -271,11 +271,21 @@ def get_all_product_reviews(product):
 
 
 def get_all_product_reviews_ratings(product):
+    """
+    This is to get all the reviews and process them to get the rating for the product as a whole.
+    This will return a list of 5 boolean values. They represent the 5 product review stars. When looping through
+    the list, if the value is True, it means that's a full star (good reviews). if its false it means the star is empty
+    (bad reviews)
+
+    :param product:
+    :return: list
+    """
     all_reviews = get_all_product_reviews(product)
     total_product_rating = 0
-    total_product_rating_bool = []
+    total_product_rating_bool = []  # this list contains the 'True/False for each star
 
     if not all_reviews:
+        # if there are no reviews then all the stars will be empty
         return [False, False, False, False, False]
 
     count_interval = len(all_reviews)
