@@ -2,7 +2,7 @@
 
 ![image](screenshots/img2.png)
 
-Ecommerce website built using the Django web framework. This was based on a free bootdtrap 
+Ecommerce website built using the Django web framework. This was based on a free bootstrap 
 html template that can be found [here](https://www.templateshub.net/template/belle-multipurpose-bootstrap-html-template)
 
 ## Setup
@@ -31,6 +31,4 @@ python manage.py runserver
 ![image](screenshots/img4.png)
 
 ![image](screenshots/img5.png)
-
-
 
