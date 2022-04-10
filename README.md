@@ -5,8 +5,6 @@
 Ecommerce website built using the Django web framework. This was based on a free bootstrap 
 html template that can be found [here](https://www.templateshub.net/template/belle-multipurpose-bootstrap-html-template).
 
-Live site can be found [here](https://belle-ecommerce-template.herokuapp.com/). 
-
 ## Setup
 
 Install all necessary modules with virtual env activated
