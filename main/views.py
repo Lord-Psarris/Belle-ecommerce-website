@@ -32,27 +32,6 @@ def home(request):
 
 
 def search(request):
-    # ['white', 'brown', 'black', 'darkRed']
-    # ['red', 'brown', 'black', 'darkRed', 'blue']
-    # ['white', 'black', 'grey']
-    # ['red', 'blue', 'pink', 'green']
-    # ['red', 'brown', 'black', 'pink']
-    # ['black']
-    # ['white', 'red']
-    # ['black', 'pink', 'red', 'grey']
-    # ['green', 'blue', 'red', 'white']
-    # ['red', 'blue', 'black', 'white']
-    #
-    # ['X', 'XL', 'XLL', 'M', 'S', 'XXXL', 'XXL', 'XS']
-    # ['X', 'XL', 'XLL', 'M']
-    # ['S', 'XXXL', 'XXL', 'XS']
-    # ['X', 'S', 'XXXL', 'XS']
-    # ['X', 'XL', 'XXL', 'XS']
-    # ['X', 'XL', 'XLL', 'XXXL', 'XXL']
-    # ['XXL', 'XS']
-    # ['X', 'XXL', 'XS']
-    # ['X', 'XL', 'XLL', 'M', 'S', 'XXXL']
-    # ['X', 'XL', 'XLL', 'M', 'S', 'XS']
     """
     When a user enters a query, first check if that query matches any of the sites categories
     If so, the return products that belong to that category. Otherwise return products that match
