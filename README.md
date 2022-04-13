@@ -1,4 +1,4 @@
-# Django Ecommerce Website
+# Belle Ecommerce Website
 
 ![image](screenshots/img2.png)
 
@@ -14,9 +14,9 @@ Install all necessary modules with virtual env activated
 
 Then, simply run the following commands to get started
 ```
-git clone https://github.com/Lord-Psarris/Flare-ecommerce-website.git
+git clone https://github.com/Lord-Psarris/Belle-ecommerce-website.git
 
-cd Flare-ecommerce-website
+cd Belle-ecommerce-website
 
 python manage.py runserver
 ```
@@ -31,4 +31,3 @@ python manage.py runserver
 ![image](screenshots/img4.png)
 
 ![image](screenshots/img5.png)
-
